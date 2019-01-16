@@ -10,3 +10,10 @@ git clone git@github.com:hfu/tapioca
 cd tapioca
 npm install
 ```
+
+# run
+```console
+vi config/default.hjson
+node index.js
+```
+

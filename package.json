@@ -1,0 +1,29 @@
+{
+  "name": "tapioca",
+  "version": "1.0.0",
+  "description": "mbtiles from osm.pbf; no pressure or compression",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hfu/tapioca.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/hfu/tapioca/issues"
+  },
+  "homepage": "https://github.com/hfu/tapioca#readme",
+  "dependencies": {
+    "better-queue": "^3.8.10",
+    "byline": "^5.0.0",
+    "config": "^3.0.1",
+    "hh-mm-ss": "^1.2.0",
+    "hjson": "^3.1.2",
+    "json-text-sequence": "^0.1.1",
+    "prettysize": "^2.0.0"
+  }
+}

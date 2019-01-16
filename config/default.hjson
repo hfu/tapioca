@@ -1,0 +1,7 @@
+{
+  srcDir: ../tapal/dst
+  dstDir: mbtiles
+  osmiumExportConfigPath: osmium-export-config.json
+  concurrent: 2
+  minOrder: 30
+}

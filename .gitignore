@@ -1,3 +1,6 @@
+*.mbtiles
+*.mbtiles-journal
+
 # Logs
 logs
 *.log
