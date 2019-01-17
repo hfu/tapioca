@@ -4,5 +4,6 @@ module.exports = f => {
     maxzoom: 14,
     layer: 'other'
   }
+  f.properties = {} // Let's see if we drop every properties.
   return f
 }

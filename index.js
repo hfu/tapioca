@@ -17,7 +17,7 @@ const queue = new Queue((t, cb) => {
     `${t.dstDir}/${t.filename.replace('osm.pbf', 'mbtiles')}`
   if (fs.existsSync(dstPath)) return cb()
   const srcStat = fs.statSync(srcPath)
-  console.log(`${t.filename} ${pretty(srcStat.size)} -> ${dstPath}`)
+  // console.log(`${t.filename} ${pretty(srcStat.size)} -> ${dstPath}`)
 
   const osmium = spawn('osmium', [
     'export',
@@ -69,7 +69,8 @@ const queue = new Queue((t, cb) => {
       if (err) throw err
       const dstStat = fs.statSync(dstPath)
       const queueStats = queue.getStats()
-      console.log(`  ${t.filename} ${fCount}f ${pretty(srcStat.size)} => ${pretty(dstStat.size)} ${TimeFormat.fromMs(new Date() - startTime)} (${queueStats.total + 1}/${queueStats.peak})`)
+      const period = new Date() - startTime
+      console.log(`  [${queueStats.total + 1}] ${t.filename} ${fCount}f ${pretty(srcStat.size)} => ${pretty(dstStat.size)} (${Math.round(100.0 * dstStat.size / srcStat.size)} %) ${TimeFormat.fromMs(period)} source ${pretty(srcStat.size / period * 1000)}/s(${queueStats.total + 1}/${queueStats.peak})`)
       return cb()
     })
   })
