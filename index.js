@@ -15,7 +15,7 @@ const queue = new Queue((t, cb) => {
     `${t.dstDir}/part-${t.filename.replace('osm.pbf', 'mbtiles')}`
   const dstPath = 
     `${t.dstDir}/${t.filename.replace('osm.pbf', 'mbtiles')}`
-  if (fs.existsSync(dstPath)) return cb()
+  // if (fs.existsSync(dstPath)) return cb()
   const srcStat = fs.statSync(srcPath)
   // console.log(`${t.filename} ${pretty(srcStat.size)} -> ${dstPath}`)
 
@@ -30,7 +30,7 @@ const queue = new Queue((t, cb) => {
   ], { stdio: ['inherit', 'pipe', 'inherit'] })
 
   const tippecanoe = spawn('tippecanoe', [
-    '--quiet',
+    // '--quiet',
     '--no-feature-limit',
     '--no-tile-size-limit',
     '--force',
@@ -41,19 +41,20 @@ const queue = new Queue((t, cb) => {
     `--output=${tmpPath}`
   ], { stdio: ['pipe', 'inherit', 'inherit'] })
 
-  let fCount = 0
+  let toBeCalled = false
   const p = new parser()
   .on('data', f => {
     f = modify(f) 
     if (f) { 
-      fCount++
       if (tippecanoe.stdin.write(JSON.stringify(f))) {
       } else {
-        if (fCount % 1000 == 0) {
-          osmium.stdout.pause()
+        osmium.stdout.pause()
+        if (!toBeCalled) {
           tippecanoe.stdin.once('drain', () => {
             osmium.stdout.resume()
+            toBeCalled = false
           })
+          toBeCalled = true
         }
       }
     }
@@ -70,12 +71,13 @@ const queue = new Queue((t, cb) => {
       const dstStat = fs.statSync(dstPath)
       const queueStats = queue.getStats()
       const period = new Date() - startTime
-      console.log(`  [${queueStats.total + 1}] ${t.filename} ${fCount}f ${pretty(srcStat.size)} => ${pretty(dstStat.size)} (${Math.round(100.0 * dstStat.size / srcStat.size)} %) ${TimeFormat.fromMs(period)} source ${pretty(srcStat.size / period * 1000)}/s(${queueStats.total + 1}/${queueStats.peak})`)
+      console.log(`  [${queueStats.total + 1}] ${t.filename} ${pretty(srcStat.size)} => ${pretty(dstStat.size)} (${Math.round(100.0 * dstStat.size / srcStat.size)} %) ${TimeFormat.fromMs(period)} source ${pretty(srcStat.size / period * 1000)}/s(${queueStats.total + 1}/${queueStats.peak})`)
       return cb()
     })
   })
 }, { concurrent: config.get('concurrent') })
 
+/*
 const list = byline(spawn('ls', ['-S', config.get('srcDir')]).stdout)
 let count = 0
 list.on('data', line => {
@@ -90,3 +92,23 @@ list.on('data', line => {
     })
   }
 })
+*/
+
+const srcDir = config.get('srcDir')
+const dstDir = config.get('dstDir')
+const push = (x, y) => {
+  queue.push({
+    srcDir: srcDir,
+    dstDir: dstDir,
+    filename: `6-${x}-${y}.osm.pbf`
+  })
+}
+for (let dy = 1; dy <= 8; dy++) {
+  for (let dx = 1; dx <= 10; dx++) {
+    push(32 - dx, 32 - dy)
+    push(31 + dx, 32 - dy)
+    push(32 - dx, 31 + dy)
+    push(32 + dx, 31 + dy)
+  }
+}
+
