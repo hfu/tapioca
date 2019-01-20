@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/hfu/tapioca#readme",
   "dependencies": {
+    "@mapbox/geojson-area": "^0.2.2",
     "better-queue": "^3.8.10",
     "byline": "^5.0.0",
     "config": "^3.0.1",

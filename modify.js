@@ -1,6 +1,15 @@
 module.exports = f => {
-  const flap = () => {
-    return 10 //11
+  const geojsonArea = require('@mapbox/geojson-area')
+  const flap = (z) => {
+    if (f.geometry.type === 'MultiPolygon') {
+      const mz = Math.floor(
+        19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
+      )
+      if (mz > 15) { mz = 15 }
+      console.log(mz)
+      return mz
+    }
+    return z ? z : 10
   }
 
   f.tippecanoe = {
@@ -157,18 +166,92 @@ module.exports = f => {
   }
 
   // 9. place
-  if (
-    f.properties.place ||
-    f.properties.leisure ||
-    f.properties.amenity
-  ) {
+  if (f.properties.place) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: 14,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    switch (f.properties.place) {
+      case 'city':
+        f.tippecanoe.minzoom = 8
+        break
+      case 'town':
+        f.tippecanoe.minzoom = 10
+        break
+      case 'villege':
+        f.tippecanoe.minzoom = 12
+        break
+    }
+    if (f.properties.capital === 'yes') {
+      f.tippecanoe.minzoom = 6
+    }
+    return f
+  }
+  if (f.properties.leisure) {
+    f.tippecanoe = {
+      minzoom: 11,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.amenity) {
+    f.tippecanoe = {
+      minzoom: 14,
+      maxzoom: 14,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.historic) {
+    f.tippecanoe = {
+      minzoom: 13,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.military) {
+    f.tippecanoe = {
+      minzoom: 13,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.office) {
+    f.tippecanoe = {
+      minzoom: 13,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.craft) {
+    f.tippecanoe = {
+      minzoom: 14,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.tourism) {
+    f.tippecanoe = {
+      minzoom: 14,
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if (f.properties.shop) {
+    f.tippecanoe = {
+      minzoom: 14,
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
 
-  return f // if nobody catches
+  return f // if not caught
 }
