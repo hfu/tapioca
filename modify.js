@@ -1,6 +1,7 @@
 module.exports = f => {
   const geojsonArea = require('@mapbox/geojson-area')
   const flap = (z) => {
+    console.log(f.geometry.type)
     if (f.geometry.type === 'MultiPolygon') {
       const mz = Math.floor(
         19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
