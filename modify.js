@@ -54,14 +54,14 @@ module.exports = f => {
         return 6
       case '3':
       case '4':
-        return 9
+        return 10
       case '5':
       case '6':
       case '7':
       case '8':
-        return 10
-      default:
         return 11
+      default:
+        return 12
     }
   }
   if (f.properties.boundary) {
@@ -137,7 +137,7 @@ module.exports = f => {
   // 6. route
   if (f.properties.route) {
     f.tippecanoe = {
-      minzoom: 11,
+      minzoom: 7,
       maxzoom: 15,
       layer: 'route'
     }
