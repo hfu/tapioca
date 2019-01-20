@@ -6,7 +6,7 @@ module.exports = f => {
         19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
       )
       if (mz > 15) { mz = 15 }
-      console.log(mz)
+      if (mz < 6) { mz = 6 }
       return mz
     }
     return z ? z : 10
