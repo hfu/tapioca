@@ -1,6 +1,6 @@
 module.exports = f => {
   const flap = () => {
-    return 11
+    return 10 //11
   }
 
   f.tippecanoe = {
@@ -34,16 +34,34 @@ module.exports = f => {
       maxzoom: 15,
       layer: 'water'
     }
+    if (f.properties.natural === 'coastline') f.tippecanoe.minzoom = 6
     return f
   }
 
   // 3. boundary
+  const minzoomBoundary = () => {
+    switch (f.properties.admin_level) {
+      case '2':
+        return 6
+      case '3':
+      case '4':
+        return 9
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+        return 10
+      default:
+        return 11
+    }
+  }
   if (f.properties.boundary) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: minzoomBoundary(),
       maxzoom: 15,
       layer: 'boundary'
     }
+    if (f.properties.maritime === 'yes') return null
     return f
   }
 
@@ -77,9 +95,9 @@ module.exports = f => {
         return 10
       case 'trunk':
       case 'motorway_link':
-        return 9
-      case 'motorway':
         return 8
+      case 'motorway':
+        return 6
       default:
         return 15
     }

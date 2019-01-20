@@ -35,9 +35,9 @@ const queue = new Queue((t, cb) => {
     '--no-tile-size-limit',
     '--force',
     '--simplification=2',
-    '--minimum-zoom=14',
-    '--maximum-zoom=14',
-    '--base-zoom=14',
+    '--minimum-zoom=6',
+    '--maximum-zoom=15',
+    '--base-zoom=15',
     `--output=${tmpPath}`
   ], { stdio: ['pipe', 'inherit', 'inherit'] })
 
