@@ -30,6 +30,9 @@ module.exports = f => {
       maxzoom: 15,
       layer: 'nature'
     }
+    if (f.properties.natural === 'tree') {
+      f.tippecanoe.minzoom = 15
+    }
     return f
   }
 
