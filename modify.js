@@ -1,7 +1,7 @@
 module.exports = f => {
   const geojsonArea = require('@mapbox/geojson-area')
   const flap = (z) => {
-    if (f.geometry.type === 'MultiPolygon') {
+    if (['MultiPolygon', 'Polygon'].includes(f.geometry.type)) {
       const mz = Math.floor(
         19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
       )
@@ -26,7 +26,7 @@ module.exports = f => {
     ['tree', 'wood', 'scrub'].includes(f.properties.natural)
   ) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: flap(15),
       maxzoom: 15,
       layer: 'nature'
     }
@@ -76,7 +76,7 @@ module.exports = f => {
     if (f.properties.maritime === 'yes') return null
     if (
       f.boundary === 'administrative' &&
-      f.geometry.type === 'MultiPolygon'
+      ['MultiPolygon', 'Polygon'].includes(f.geometry.type)
     ) return null
     return f
   }
@@ -130,7 +130,7 @@ module.exports = f => {
   // 5. railway
   if (f.properties.railway) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: flap(11),
       maxzoom: 15,
       layer: 'railway'
     }
@@ -155,7 +155,7 @@ module.exports = f => {
     f.properties.public_transport
   ) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: flap(14),
       maxzoom: 15,
       layer: 'structure'
     }
@@ -165,7 +165,7 @@ module.exports = f => {
   // 8. building
   if (f.properties.building) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: flap(15),
       maxzoom: 15,
       layer: 'building'
     }
