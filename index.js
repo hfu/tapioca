@@ -30,7 +30,7 @@ const queue = new Queue((t, cb) => {
   ], { stdio: ['inherit', 'pipe', 'inherit'] })
 
   const tippecanoe = spawn('tippecanoe', [
-    // '--quiet',
+    '--quiet',
     '--no-feature-limit',
     '--no-tile-size-limit',
     '--force',
