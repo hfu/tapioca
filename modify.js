@@ -13,7 +13,7 @@ module.exports = f => {
   }
 
   f.tippecanoe = {
-    minzoom: 14,
+    minzoom: 15,
     maxzoom: 15,
     layer: 'other'
   }
@@ -22,24 +22,35 @@ module.exports = f => {
 
   // 1. nature
   if (
-    f.properties.landuse ||
-    ['tree', 'wood', 'scrub'].includes(f.properties.natural)
+    [
+      'cemetry', 'landfill', 'meadow', 'allotments', 'recreation_ground',
+      'orchard', 'vineyard', 'quarry', 'forest', 'farm', 'farmyard',
+      'farmland', 'grass', 'residential', 'retail', 'commercial',
+      'military', 'industrial'
+    ].includes(f.properties.landuse) ||
+    [
+      'tree', 'wood', 'scrub', 'heath'
+    ].includes(f.properties.natural)
   ) {
     f.tippecanoe = {
       minzoom: flap(15),
       maxzoom: 15,
       layer: 'nature'
     }
-    if (f.properties.natural === 'tree') {
-      f.tippecanoe.minzoom = 15
-    }
     return f
   }
 
   // 2. water
   if (
-    f.properties.waterway ||
-    ['water', 'wetland', 'coastline'].includes(f.properties.natural)
+    [
+      'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
+    ].includes(f.properties.waterway) ||
+    [
+      'water', 'wetland', 'coastline', 'glacier'
+    ].includes(f.properties.natural) ||
+    [
+      'basin', 'reservoir'
+    ].includes(f.properties.landuse)
   ) {
     f.tippecanoe = {
       minzoom: flap(),
@@ -47,6 +58,9 @@ module.exports = f => {
       layer: 'water'
     }
     if (f.properties.natural === 'coastline') f.tippecanoe.minzoom = 6
+    if (['ditch', 'drain'].includes(f.properties.waterway)) {
+      f.tippecanoe.minzoom = 15
+    }
     return f
   }
 
@@ -64,18 +78,17 @@ module.exports = f => {
       case '8':
         return 11
       default:
-        return 12
+        return 13
     }
   }
-  if (f.properties.boundary) {
+  if (['administrative', 'national_park'].includes(f.properties.boundary)) {
     f.tippecanoe = {
       minzoom: minzoomBoundary(),
       maxzoom: 15,
       layer: 'boundary'
     }
-    if (f.properties.maritime === 'yes') return null
     if (
-      f.boundary === 'administrative' &&
+      f.properties.boundary === 'administrative' &&
       ['MultiPolygon', 'Polygon'].includes(f.geometry.type)
     ) return null
     return f
@@ -118,7 +131,13 @@ module.exports = f => {
         return 15
     }
   }
-  if (f.properties.highway) {
+  if ([
+    'bus_stop',
+    'motorway', 'trunk', 'primary', 'secondary', 'motorway_link', 'trunk_link',
+    'primary_link', 'secondary_link', 'tertiary', 'road', 'tertiary_link',
+    'track', 'bridleway', 'cycleway', 'steps', 'living_street', 'unclassified',
+    'service', 'residential', 'pedestrian', 'footway', 'path'
+  ].includes(f.properties.highway)) {
     f.tippecanoe = {
       minzoom: minzoomRoad(),
       maxzoom: 15,
@@ -128,7 +147,10 @@ module.exports = f => {
   }
 
   // 5. railway
-  if (f.properties.railway) {
+  if ([
+    'station', 'halt', 'tram_stop', 'rail', 'light_rail', 'narrow_gauge', 
+    'subway', 'tram', 'monorail'
+  ].includes(f.properties.railway)) {
     f.tippecanoe = {
       minzoom: flap(11),
       maxzoom: 15,
@@ -138,7 +160,9 @@ module.exports = f => {
   }
 
   // 6. route
-  if (f.properties.route) {
+  if ([
+    'ferry'
+  ].includes(f.properties.route)) {
     f.tippecanoe = {
       minzoom: 7,
       maxzoom: 15,
@@ -149,16 +173,28 @@ module.exports = f => {
 
   // 7. structure
   if (
-    f.properties.aeroway ||
-    f.properties.man_made ||
-    f.properties.power ||
-    f.properties.public_transport
+    [
+      'aerodrome', 'airfield', 'helipad', 'aeroway', 'runway', 'taxiway'
+    ].includes(f.properties.aeroway) ||
+    [
+      'tower', 'water_tower', 'communications_tower', 'windmill',
+      'lighthouse', 'wastewater_plant', 'watermill', 'water_works',
+      'water_well', 'storage_tank'
+    ].includes(f.properties.man_made) ||
+    [
+      'station', 'tower'
+    ].includes(f.properties.power) ||
+    [
+      'stop_position'
+    ].includes(f.properties.public_transport) ||
+    f.properties.barrier
   ) {
     f.tippecanoe = {
       minzoom: flap(14),
       maxzoom: 15,
       layer: 'structure'
     }
+    if (f.properties.barrier) f.tippecanoe.minzoom = 15
     return f
   }
 
@@ -173,7 +209,10 @@ module.exports = f => {
   }
 
   // 9. place
-  if (f.properties.place) {
+  if ([
+    'city', 'town', 'village', 'hamlet', 'isolated_dwelling', 'locality',
+    'suburb', 'neighborhood'
+  ].includes(f.properties.place)) {
     f.tippecanoe = {
       minzoom: 14,
       maxzoom: 15,
@@ -195,18 +234,42 @@ module.exports = f => {
     }
     return f
   }
-  if (f.properties.leisure) {
+  if ([
+    'golf_course', 'water_park', 'pitch', 'studium', 'sports_centre',
+    'swimming_pool', 'park', 'playground', 'common', 'recreation_ground',
+    'nature_reserve'
+  ].includes(f.properties.leisure)) {
     f.tippecanoe = {
-      minzoom: 11,
+      minzoom: flap(13),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.amenity) {
+  if ([
+    'public_building', 'townhall', 'embassy', 'courthouse', 'police',
+    'prison', 'fire_station', 'post_office', 'social_facility',
+    'customs', 'shelter', 'school', 'college', 'university',
+    'hospital', 'fuel', 'airport', 'ferry_terminal', 'parking'
+  ].includes(f.properties.amenity)) {
     f.tippecanoe = {
-      minzoom: 14,
-      maxzoom: 14,
+      minzoom: flap(14),
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if ([
+    'restaurant', 'fast_food', 'cafe', 'foot_court',
+    'biergarten', 'nightclub', 'pub', 'bar', 'community_centre',
+    'cinema', 'library', 'arts_centre', 'money_transfer',
+    'bureau_de_change', 'theatre', 'grave_yard', 'swimming_pool',
+    'bank', 'atm', 'marketplace', 'car_rental', 'pharmacy',
+    'waste_disposal', 'drinking_water', 'bus_station', 'parking'
+  ].includes(f.properties.amenity)) {
+    f.tippecanoe = {
+      minzoom: flap(15),
+      maxzoom: 15,
       layer: 'place'
     }
     return f
