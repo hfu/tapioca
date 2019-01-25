@@ -19,6 +19,43 @@ module.exports = f => {
   }
   delete f.properties['@id']
   delete f.properties['@type']
+  delete f.properties['wikidata']
+
+  // name
+  if (
+    f.properties['name:en'] ||
+    f.properties['name:fr'] ||
+    f.properties['name:es'] ||
+    f.properties['name:pt'] ||
+    f.properties['name:ar'] ||
+    f.properties['int_name'] ||
+    f.properties['name']
+  ) {
+    let name = ''
+    if (f.properties['name:en']) {
+      name = f.properties['name:en']
+    } else if (f.properties['name:fr']) {
+      name = f.properties['name:fr']
+    } else if (f.properties['name:es']) {
+      name = f.properties['name:es']
+    } else if (f.properties['name:pt']) {
+      name = f.properties['name:pt']
+    } else if (f.properties['name:ar']) {
+      name = f.properties['name:ar']
+    } else if (f.properties['int_name']) {
+      name = f.properties['int_name']
+    } else {
+      name = f.properties['name']
+    }
+    delete f.properties['name:en']
+    delete f.properties['name:fr']
+    delete f.properties['name:es']
+    delete f.properties['name:pt']
+    delete f.properties['name:ar']
+    delete f.properties['int_name']
+    delete f.properties['name']
+    f.properties.name = name
+  }
 
   // 1. nature
   if (
@@ -89,7 +126,10 @@ module.exports = f => {
     }
     if (
       f.properties.boundary === 'administrative' &&
-      ['MultiPolygon', 'Polygon'].includes(f.geometry.type)
+      (
+        ['MultiPolygon', 'Polygon'].includes(f.geometry.type) ||
+        f.properties.maritime === 'yes'
+      )
     ) return null
     return f
   }
@@ -240,7 +280,17 @@ module.exports = f => {
     'nature_reserve'
   ].includes(f.properties.leisure)) {
     f.tippecanoe = {
-      minzoom: flap(13),
+      minzoom: flap(14),
+      maxzoom: 15,
+      layer: 'place'
+    }
+    return f
+  }
+  if ([
+    'swimming', 'tennis'
+  ].includes(f.properties.sports)) {
+    f.tippecanoe = {
+      minzoom: flap(14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -274,54 +324,71 @@ module.exports = f => {
     }
     return f
   }
-  if (f.properties.historic) {
+  if ([
+    'monument', 'memorial', 'castle', 'fort',
+    'archaeological_site', 'ruins'
+  ].includes(f.properties.historic)) {
     f.tippecanoe = {
-      minzoom: 13,
+      minzoom: flap(15),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.military) {
+  if ([
+    'airfield'
+  ].includes(f.properties.military)) {
     f.tippecanoe = {
-      minzoom: 13,
+      minzoom: flap(14),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.office) {
+  if ([
+    'government', 'ngo'
+  ].includes(f.properties.office)) {
     f.tippecanoe = {
-      minzoom: 13,
+      minzoom: flap(14),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.craft) {
+  if ([
+    'bakery'
+  ].includes(f.properties.craft)) {
     f.tippecanoe = {
-      minzoom: 14,
+      minzoom: 15,
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.tourism) {
+  if ([
+    'bed_and_breakfast', 'hotel', 'motel', 'guest_house', 'hostel',
+    'chalet', 'museum', 'zoo', 'theme_park'
+  ].includes(f.properties.tourism)) {
     f.tippecanoe = {
-      minzoom: 14,
+      minzoom: flap(15),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
-  if (f.properties.shop) {
+  if ([
+    'car_repair', 'supermarket', 'kiosk', 'department_store', 'clothes',
+    'books', 'butcher', 'beverages', 'alcohol', 'optician', 'stationery',
+    'mobile_phone', 'greengrocer', 'car', 'furniture', 'computer',
+    'hairdresser', 'bakery', 'travel_agency'
+  ].includes(f.properties.shop)) {
     f.tippecanoe = {
-      minzoom: 14,
+      minzoom: flap(15),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
 
-  return f // if not caught
+  return null // return f as other, or return null)
 }
