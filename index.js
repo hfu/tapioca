@@ -39,7 +39,7 @@ const queue = new Queue((t, cb) => {
     '--maximum-zoom=15',
     '--base-zoom=15',
     `--output=${tmpPath}`
-  ], { stdio: ['pipe', 'inherit', 'inherit'] })
+  ], { stdio: ['pipe', 'ignore', 'ignore'] })
 
   let toBeCalled = false
   const p = new parser()
