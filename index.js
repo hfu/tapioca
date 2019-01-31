@@ -11,17 +11,25 @@ const modify = require('./modify.js')
 const queue = new Queue((t, cb) => {
   const startTime = new Date()
   const srcPath = `${t.srcDir}/${t.filename}`
+  if (!fs.existsSync(srcPath)) {
+    console.log(`${srcPath} is not there.`)
+    return cb()
+  }
   const tmpPath = 
     `${t.dstDir}/part-${t.filename.replace('osm.pbf', 'mbtiles')}`
   const dstPath = 
     `${t.dstDir}/${t.filename.replace('osm.pbf', 'mbtiles')}`
-  // if (fs.existsSync(dstPath)) return cb()
+  if (fs.existsSync(dstPath)) {
+    console.log(`${dstPath} is already there.`)
+    return cb()
+  }
   const srcStat = fs.statSync(srcPath)
   // console.log(`${t.filename} ${pretty(srcStat.size)} -> ${dstPath}`)
 
   const osmium = spawn('osmium', [
     'export',
-    /* '--verbose', '--show-errors', */
+    // '--verbose',
+    '--show-errors', 
     '--index-type=sparse_file_array',
     `--config=${config.get('osmiumExportConfigPath')}`,
     '--output-format=geojsonseq',
@@ -30,7 +38,7 @@ const queue = new Queue((t, cb) => {
   ], { stdio: ['inherit', 'pipe', 'inherit'] })
 
   const tippecanoe = spawn('tippecanoe', [
-    '--quiet',
+    // '--quiet',
     '--no-feature-limit',
     '--no-tile-size-limit',
     '--force',

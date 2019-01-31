@@ -23,13 +23,13 @@ module.exports = f => {
 
   // name
   if (
-    f.properties['name:en'] ||
-    f.properties['name:fr'] ||
-    f.properties['name:es'] ||
-    f.properties['name:pt'] ||
-    f.properties['name:ar'] ||
-    f.properties['int_name'] ||
-    f.properties['name']
+    f.properties.hasOwnProperty('name:en') ||
+    f.properties.hasOwnProperty('name:fr') ||
+    f.properties.hasOwnProperty('name:es') ||
+    f.properties.hasOwnProperty('name:pt') ||
+    f.properties.hasOwnProperty('name:ar') ||
+    f.properties.hasOwnProperty('int_name') ||
+    f.properties.hasOwnProperty('name')
   ) {
     let name = ''
     if (f.properties['name:en']) {
@@ -54,6 +54,11 @@ module.exports = f => {
     delete f.properties['name:ar']
     delete f.properties['int_name']
     delete f.properties['name']
+    for (const key in f.properties) {
+      if (key.match(/name:/)) {
+        delete f.properties[key]
+      }
+    }
     f.properties.name = name
   }
 
