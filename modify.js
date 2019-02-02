@@ -63,7 +63,7 @@ module.exports = f => {
       'cemetry', 'landfill', 'meadow', 'allotments', 'recreation_ground',
       'orchard', 'vineyard', 'quarry', 'forest', 'farm', 'farmyard',
       'farmland', 'grass', 'residential', 'retail', 'commercial',
-      'military', 'industrial'
+      'military', 'industrial', 'basin'
     ].includes(f.properties.landuse) ||
     [
       'tree', 'wood', 'scrub', 'heath'
@@ -78,25 +78,47 @@ module.exports = f => {
   }
 
   // 2. water
-  if (
-    [
-      'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
-    ].includes(f.properties.waterway) ||
-    [
-      'water', 'wetland', 'coastline', 'glacier'
-    ].includes(f.properties.natural) ||
-    [
-      'basin', 'reservoir'
-    ].includes(f.properties.landuse)
-  ) {
+  if ([
+    'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
+  ].includes(f.properties.waterway)) {
+    const lut = {
+      river: 10,
+      stream: 14,
+      canal: 13,
+      drain: 14,
+      riverbank: 10,
+      ditch: 15
+    } 
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: lut[f.properties.waterway]
       maxzoom: 15,
       layer: 'water'
     }
-    if (f.properties.natural === 'coastline') f.tippecanoe.minzoom = 6
-    if (['ditch', 'drain'].includes(f.properties.waterway)) {
-      f.tippecanoe.minzoom = 15
+    return f
+  }
+
+  if ([
+    'water', 'wetland', 'coastline', 'glacier'
+  ].includes(f.properties.natural)) {
+    const lut = {
+      water: 6,
+      wetland: 8,
+      coastline: 6,
+      glacier: 6
+    }
+    f.tippecanoe = {
+      minzoom: lut[f.properties.natural]
+      maxzoom: 15,
+      layer: 'water'
+    }
+    return f
+  }
+
+  if (['reservoir'].includes(f.properties.landuse)) {
+    f.tippecanoe = {
+      minzoom: 13,
+      maxzoom: 15,
+      layer: 'water'
     }
     return f
   }
