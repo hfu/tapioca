@@ -47,11 +47,13 @@ module.exports = f => {
     } else {
       name = f.properties['name']
     }
+/*
     delete f.properties['name:en']
     delete f.properties['name:fr']
     delete f.properties['name:es']
     delete f.properties['name:pt']
     delete f.properties['name:ar']
+*/
     delete f.properties['int_name']
     delete f.properties['name']
     for (const key in f.properties) {
@@ -95,7 +97,7 @@ module.exports = f => {
       ditch: 15
     } 
     f.tippecanoe = {
-      minzoom: lut[f.properties.waterway]
+      minzoom: lut[f.properties.waterway],
       maxzoom: 15,
       layer: 'water'
     }
@@ -112,7 +114,7 @@ module.exports = f => {
       glacier: 6
     }
     f.tippecanoe = {
-      minzoom: lut[f.properties.natural]
+      minzoom: lut[f.properties.natural],
       maxzoom: 15,
       layer: 'water'
     }
