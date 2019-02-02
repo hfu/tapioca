@@ -95,7 +95,7 @@ module.exports = f => {
     ].includes(f.properties.landuse)
   ) {
     f.tippecanoe = {
-      minzoom: flap(),
+      minzoom: 6, //flap(),
       maxzoom: 15,
       layer: 'water'
     }
