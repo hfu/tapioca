@@ -89,11 +89,11 @@ module.exports = f => {
     'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
   ].includes(f.properties.waterway)) {
     const lut = {
-      river: 10,
+      river: 8,
       stream: 14,
       canal: 13,
       drain: 14,
-      riverbank: 10,
+      riverbank: 15,
       ditch: 15
     } 
     f.tippecanoe = {
