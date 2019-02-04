@@ -170,15 +170,15 @@ module.exports = f => {
       case 'pedestrian':
       case 'footway':
       case 'cycleway':
+      case 'living_street':
       case 'steps':
       case 'bridleway':
         return 15
+      case 'residential':
       case 'service':
       case 'track':
-        return 14
       case 'unclassified':
-      case 'residential':
-      case 'living_street':
+        return 14
       case 'road':
       case 'tertiary_link':
         return 13
