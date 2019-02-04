@@ -118,6 +118,11 @@ module.exports = f => {
       maxzoom: 15,
       layer: 'water'
     }
+    if (['LineString', 'MultiLineString'].includes(f.geometry.type)) {
+      if (['water', 'wetland'].includes(f.properties.natural)) {
+        return null
+      }
+    }
     return f
   }
 
