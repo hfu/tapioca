@@ -89,7 +89,7 @@ module.exports = f => {
     'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
   ].includes(f.properties.waterway)) {
     const lut = {
-      river: 8,
+      river: 10,
       stream: 14,
       canal: 13,
       drain: 14,
