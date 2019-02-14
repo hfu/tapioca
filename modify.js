@@ -206,7 +206,7 @@ module.exports = f => {
         return 10
       case 'trunk':
       case 'motorway_link':
-        return 8
+        return 9
       case 'motorway':
         return 6
       default:
