@@ -246,7 +246,7 @@ module.exports = f => {
     'ferry'
   ].includes(f.properties.route)) {
     f.tippecanoe = {
-      minzoom: 7,
+      minzoom: 11,
       maxzoom: 15,
       layer: 'route'
     }
