@@ -352,7 +352,7 @@ module.exports = f => {
     return f
   }
   if ([
-    'restaurant', 'fast_food', 'cafe', 'foot_court',
+    'restaurant', 'fast_food', 'cafe', 'food_court',
     'biergarten', 'nightclub', 'pub', 'bar', 'community_centre',
     'cinema', 'library', 'arts_centre', 'money_transfer',
     'bureau_de_change', 'theatre', 'grave_yard', 'swimming_pool',
