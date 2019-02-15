@@ -86,26 +86,6 @@ module.exports = f => {
 
   // 2. water
   if ([
-    'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
-  ].includes(f.properties.waterway) &&
-  !(f.properties.boundary === 'administrative')) {
-    const lut = {
-      river: 10,
-      stream: 14,
-      canal: 13,
-      drain: 14,
-      riverbank: 15,
-      ditch: 15
-    } 
-    f.tippecanoe = {
-      minzoom: lut[f.properties.waterway],
-      maxzoom: 15,
-      layer: 'water'
-    }
-    return f
-  }
-
-  if ([
     'water', 'wetland', 'coastline', 'glacier'
   ].includes(f.properties.natural)) {
     const lut = {
@@ -131,6 +111,26 @@ module.exports = f => {
           f.tippecanoe.minzoom = 15
         }
         break
+    }
+    return f
+  }
+
+  if ([
+    'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
+  ].includes(f.properties.waterway) &&
+  !(f.properties.boundary === 'administrative')) {
+    const lut = {
+      river: 10,
+      stream: 14,
+      canal: 13,
+      drain: 14,
+      riverbank: 15,
+      ditch: 15
+    } 
+    f.tippecanoe = {
+      minzoom: lut[f.properties.waterway],
+      maxzoom: 15,
+      layer: 'water'
     }
     return f
   }
