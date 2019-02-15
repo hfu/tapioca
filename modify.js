@@ -87,7 +87,8 @@ module.exports = f => {
   // 2. water
   if ([
     'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
-  ].includes(f.properties.waterway)) {
+  ].includes(f.properties.waterway) &&
+  !(f.properties.boundary === 'administrative')) {
     const lut = {
       river: 10,
       stream: 14,
