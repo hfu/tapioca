@@ -146,6 +146,9 @@ module.exports = f => {
 
   // 3. boundary
   const minzoomBoundary = () => {
+    if (f.properties.boundary === 'national_park') {
+      return 9
+    }
     switch (f.properties.admin_level) {
       case '2':
         return 6
