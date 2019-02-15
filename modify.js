@@ -317,6 +317,9 @@ module.exports = f => {
     }
     if (f.properties.capital === 'yes') {
       f.tippecanoe.minzoom = 6
+      if (f.properties.name === 'Vatican City') {
+        f.tippecanoe.minzoom = 11
+      }
     }
     return f
   }
