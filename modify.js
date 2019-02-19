@@ -238,9 +238,12 @@ module.exports = f => {
     'subway', 'tram', 'monorail'
   ].includes(f.properties.railway)) {
     f.tippecanoe = {
-      minzoom: flap(11),
+      minzoom: flap(10),
       maxzoom: 15,
       layer: 'railway'
+    }
+    if (f.properties.service) {
+      f.tippecanoe.minzoom = 15
     }
     return f
   }
