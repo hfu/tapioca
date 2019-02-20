@@ -124,7 +124,7 @@ module.exports = f => {
       stream: 14,
       canal: 13,
       drain: 14,
-      riverbank: 15,
+      riverbank: 6,
       ditch: 15
     } 
     f.tippecanoe = {
@@ -165,6 +165,7 @@ module.exports = f => {
     }
   }
   if (['administrative', 'national_park'].includes(f.properties.boundary)) {
+    if (f.properties.boundary === 'national_park') return null
     f.tippecanoe = {
       minzoom: minzoomBoundary(),
       maxzoom: 15,
