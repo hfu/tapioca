@@ -187,9 +187,9 @@ module.exports = f => {
       case 'living_street':
       case 'steps':
       case 'bridleway':
+      case 'service':
         return 15
       case 'residential':
-      case 'service':
       case 'track':
       case 'unclassified':
         return 14
