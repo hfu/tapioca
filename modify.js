@@ -243,6 +243,9 @@ module.exports = f => {
       maxzoom: 15,
       layer: 'railway'
     }
+    if (f.geometry.type === 'Point') {
+      f.tippecanoe.minzoom = 14
+    }
     if (f.properties.service) {
       f.tippecanoe.minzoom = 15
     }
