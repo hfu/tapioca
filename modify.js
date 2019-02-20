@@ -86,26 +86,6 @@ module.exports = f => {
 
   // 2. water
   if ([
-    'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
-  ].includes(f.properties.waterway) &&
-  !(f.properties.boundary === 'administrative')) {
-    const lut = {
-      river: 10,
-      stream: 14,
-      canal: 13,
-      drain: 14,
-      riverbank: 15,
-      ditch: 15
-    } 
-    f.tippecanoe = {
-      minzoom: lut[f.properties.waterway],
-      maxzoom: 15,
-      layer: 'water'
-    }
-    return f
-  }
-
-  if ([
     'water', 'wetland', 'coastline', 'glacier'
   ].includes(f.properties.natural)) {
     const lut = {
@@ -135,6 +115,26 @@ module.exports = f => {
     return f
   }
 
+  if ([
+    'river', 'stream', 'canal', 'drain', 'riverbank', 'ditch'
+  ].includes(f.properties.waterway) &&
+  !(f.properties.boundary === 'administrative')) {
+    const lut = {
+      river: 10,
+      stream: 14,
+      canal: 13,
+      drain: 14,
+      riverbank: 15,
+      ditch: 15
+    } 
+    f.tippecanoe = {
+      minzoom: lut[f.properties.waterway],
+      maxzoom: 15,
+      layer: 'water'
+    }
+    return f
+  }
+
   if (['reservoir'].includes(f.properties.landuse)) {
     f.tippecanoe = {
       minzoom: 13,
@@ -146,6 +146,9 @@ module.exports = f => {
 
   // 3. boundary
   const minzoomBoundary = () => {
+    if (f.properties.boundary === 'national_park') {
+      return 9
+    }
     switch (f.properties.admin_level) {
       case '2':
         return 6
@@ -235,9 +238,12 @@ module.exports = f => {
     'subway', 'tram', 'monorail'
   ].includes(f.properties.railway)) {
     f.tippecanoe = {
-      minzoom: flap(11),
+      minzoom: flap(10),
       maxzoom: 15,
       layer: 'railway'
+    }
+    if (f.properties.service) {
+      f.tippecanoe.minzoom = 15
     }
     return f
   }
@@ -314,6 +320,9 @@ module.exports = f => {
     }
     if (f.properties.capital === 'yes') {
       f.tippecanoe.minzoom = 6
+      if (f.properties.name === 'Vatican City') {
+        f.tippecanoe.minzoom = 11
+      }
     }
     return f
   }
