@@ -47,13 +47,6 @@ module.exports = f => {
     } else {
       name = f.properties['name']
     }
-/*
-    delete f.properties['name:en']
-    delete f.properties['name:fr']
-    delete f.properties['name:es']
-    delete f.properties['name:pt']
-    delete f.properties['name:ar']
-*/
     delete f.properties['int_name']
     delete f.properties['name']
     for (const key in f.properties) {
@@ -64,7 +57,19 @@ module.exports = f => {
     f.properties.name = name
   }
 
-  // 1. nature
+  return place() ||
+    boundary(f) ||
+    water(f) ||
+    nature(f) ||
+    road(f) ||
+    railway(f) ||
+    route(f) ||
+    structure(f) ||
+    building(f) ||
+}
+
+// 1. nature
+const nature = (f) => {
   if (
     [
       'cemetry', 'landfill', 'meadow', 'allotments', 'recreation_ground',
@@ -83,8 +88,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 2. water
+// 2. water
+const water = (f) => {
   if ([
     'water', 'wetland', 'coastline', 'glacier'
   ].includes(f.properties.natural)) {
@@ -143,8 +150,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 3. boundary
+// 3. boundary
+const boundary = (f) => {
   const minzoomBoundary = () => {
     if (f.properties.boundary === 'national_park') {
       return 9
@@ -180,8 +189,10 @@ module.exports = f => {
     ) return null
     return f
   }
+}
 
-  // 4. road
+// 4. road
+const road = (f) => {
   const minzoomRoad = () => {
     switch (f.properties.highway) {
       case 'path':
@@ -232,8 +243,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 5. railway
+// 5. railway
+const railway = (f) => {
   if ([
     'station', 'halt', 'tram_stop', 'rail', 'light_rail', 'narrow_gauge', 
     'subway', 'tram', 'monorail'
@@ -251,8 +264,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 6. route
+// 6. route
+const route = (f) => {
   if ([
     'ferry'
   ].includes(f.properties.route)) {
@@ -263,8 +278,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 7. structure
+// 7. structure
+const structure = (f) => {
   if (
     [
       'aerodrome', 'airfield', 'helipad', 'aeroway', 'runway', 'taxiway'
@@ -290,8 +307,10 @@ module.exports = f => {
     if (f.properties.barrier) f.tippecanoe.minzoom = 15
     return f
   }
+}
 
-  // 8. building
+// 8. building
+const building = (f) => {
   if (f.properties.building) {
     f.tippecanoe = {
       minzoom: flap(15),
@@ -300,8 +319,10 @@ module.exports = f => {
     }
     return f
   }
+}
 
-  // 9. place
+// 9. place
+const place = (f) => {
   if ([
     'city', 'town', 'village', 'hamlet', 'isolated_dwelling', 'locality',
     'suburb', 'neighborhood'
@@ -445,6 +466,4 @@ module.exports = f => {
     }
     return f
   }
-
-  return null // return f as other, or return null)
 }
