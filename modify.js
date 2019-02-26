@@ -137,7 +137,7 @@ module.exports = f => {
 
   if (['reservoir'].includes(f.properties.landuse)) {
     f.tippecanoe = {
-      minzoom: 13,
+      minzoom: 6,
       maxzoom: 15,
       layer: 'water'
     }
