@@ -65,7 +65,7 @@ module.exports = f => {
     railway(f) ||
     route(f) ||
     structure(f) ||
-    building(f) ||
+    building(f)
 }
 
 // 1. nature
