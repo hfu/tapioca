@@ -1,25 +1,15 @@
 module.exports = f => {
   const geojsonArea = require('@mapbox/geojson-area')
-  const flap = (z) => {
-    if (['MultiPolygon', 'Polygon'].includes(f.geometry.type)) {
-      const mz = Math.floor(
-        19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
-      )
-      if (mz > 15) { mz = 15 }
-      if (mz < 6) { mz = 6 }
-      return mz
-    }
-    return z ? z : 10
-  }
 
   f.tippecanoe = {
     minzoom: 15,
     maxzoom: 15,
     layer: 'other'
   }
-  delete f.properties['@id']
-  delete f.properties['@type']
-  delete f.properties['wikidata']
+// they are processed in osmium-export-config.json now.
+// delete f.properties['@id']
+// delete f.properties['@type']
+// delete f.properties['wikidata']
 
   // name
   if (
@@ -57,7 +47,7 @@ module.exports = f => {
     f.properties.name = name
   }
 
-  return place() ||
+  return place(f) ||
     boundary(f) ||
     water(f) ||
     nature(f) ||
@@ -66,6 +56,18 @@ module.exports = f => {
     route(f) ||
     structure(f) ||
     building(f)
+}
+
+const flap = (f, z) => {
+  if (['MultiPolygon', 'Polygon'].includes(f.geometry.type)) {
+    const mz = Math.floor(
+      19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
+    )
+    if (mz > 15) { mz = 15 }
+    if (mz < 6) { mz = 6 }
+    return mz
+  }
+  return z ? z : 10
 }
 
 // 1. nature
@@ -82,12 +84,13 @@ const nature = (f) => {
     ].includes(f.properties.natural)
   ) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'nature'
     }
     return f
   }
+  return null
 }
 
 // 2. water
@@ -150,6 +153,7 @@ const water = (f) => {
     }
     return f
   }
+  return null
 }
 
 // 3. boundary
@@ -189,6 +193,7 @@ const boundary = (f) => {
     ) return null
     return f
   }
+  return null
 }
 
 // 4. road
@@ -243,6 +248,7 @@ const road = (f) => {
     }
     return f
   }
+  return null
 }
 
 // 5. railway
@@ -252,7 +258,7 @@ const railway = (f) => {
     'subway', 'tram', 'monorail'
   ].includes(f.properties.railway)) {
     f.tippecanoe = {
-      minzoom: flap(10),
+      minzoom: flap(f, 10),
       maxzoom: 15,
       layer: 'railway'
     }
@@ -264,6 +270,7 @@ const railway = (f) => {
     }
     return f
   }
+  return null
 }
 
 // 6. route
@@ -278,6 +285,7 @@ const route = (f) => {
     }
     return f
   }
+  return null
 }
 
 // 7. structure
@@ -300,25 +308,27 @@ const structure = (f) => {
     f.properties.barrier
   ) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'structure'
     }
     if (f.properties.barrier) f.tippecanoe.minzoom = 15
     return f
   }
+  return null
 }
 
 // 8. building
 const building = (f) => {
   if (f.properties.building) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'building'
     }
     return f
   }
+  return null
 }
 
 // 9. place
@@ -357,7 +367,7 @@ const place = (f) => {
     'nature_reserve'
   ].includes(f.properties.leisure)) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -367,7 +377,7 @@ const place = (f) => {
     'swimming', 'tennis'
   ].includes(f.properties.sports)) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -380,7 +390,7 @@ const place = (f) => {
     'hospital', 'fuel', 'airport', 'ferry_terminal', 'parking'
   ].includes(f.properties.amenity)) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -395,7 +405,7 @@ const place = (f) => {
     'waste_disposal', 'drinking_water', 'bus_station', 'parking'
   ].includes(f.properties.amenity)) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'place'
     }
@@ -406,7 +416,7 @@ const place = (f) => {
     'archaeological_site', 'ruins'
   ].includes(f.properties.historic)) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'place'
     }
@@ -416,7 +426,7 @@ const place = (f) => {
     'airfield'
   ].includes(f.properties.military)) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -426,7 +436,7 @@ const place = (f) => {
     'government', 'ngo'
   ].includes(f.properties.office)) {
     f.tippecanoe = {
-      minzoom: flap(14),
+      minzoom: flap(f, 14),
       maxzoom: 15,
       layer: 'place'
     }
@@ -447,7 +457,7 @@ const place = (f) => {
     'chalet', 'museum', 'zoo', 'theme_park'
   ].includes(f.properties.tourism)) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'place'
     }
@@ -460,10 +470,11 @@ const place = (f) => {
     'hairdresser', 'bakery', 'travel_agency'
   ].includes(f.properties.shop)) {
     f.tippecanoe = {
-      minzoom: flap(15),
+      minzoom: flap(f, 15),
       maxzoom: 15,
       layer: 'place'
     }
     return f
   }
+  return null
 }
