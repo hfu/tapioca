@@ -1,5 +1,6 @@
+const geojsonArea = require('@mapbox/geojson-area')
+
 module.exports = f => {
-  const geojsonArea = require('@mapbox/geojson-area')
 
   f.tippecanoe = {
     minzoom: 15,
@@ -50,12 +51,12 @@ module.exports = f => {
   return place(f) ||
     boundary(f) ||
     water(f) ||
-    nature(f) ||
+    building(f) ||
     road(f) ||
     railway(f) ||
+    nature(f) ||
     route(f) ||
-    structure(f) ||
-    building(f)
+    structure(f)
 }
 
 const flap = (f, z) => {
@@ -333,6 +334,7 @@ const building = (f) => {
 
 // 9. place
 const place = (f) => {
+  if (f.geometry.type !== 'Point') return null
   if ([
     'city', 'town', 'village', 'hamlet', 'isolated_dwelling', 'locality',
     'suburb', 'neighborhood'
