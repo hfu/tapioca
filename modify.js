@@ -118,7 +118,7 @@ const water = (f) => {
         }
         break
       case 'Point':
-        if (['water'].includes(f.properties.natural)) {
+        if (['water', 'wetland'].includes(f.properties.natural)) {
           f.tippecanoe.minzoom = 15
         }
         break
@@ -151,6 +151,9 @@ const water = (f) => {
       minzoom: 6,
       maxzoom: 15,
       layer: 'water'
+    }
+    if (f.geometry.type === 'Point') {
+      f.tippecanoe.minzoom = 15
     }
     return f
   }
