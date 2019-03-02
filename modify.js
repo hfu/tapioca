@@ -1,3 +1,5 @@
+raise new Error('the master modify.js has been moved to produce-320.')
+
 const geojsonArea = require('@mapbox/geojson-area')
 
 module.exports = f => {
@@ -49,19 +51,19 @@ module.exports = f => {
   }
 
   return place(f) ||
-    boundary(f) ||
     water(f) ||
     building(f) ||
     road(f) ||
     railway(f) ||
     nature(f) ||
+    boundary(f) ||
     route(f) ||
     structure(f)
 }
 
 const flap = (f, z) => {
   if (['MultiPolygon', 'Polygon'].includes(f.geometry.type)) {
-    const mz = Math.floor(
+    let mz = Math.floor(
       19 - Math.log2(geojsonArea.geometry(f.geometry)) / 2
     )
     if (mz > 15) { mz = 15 }
@@ -106,7 +108,7 @@ const water = (f) => {
       glacier: 6
     }
     f.tippecanoe = {
-      minzoom: lut[f.properties.natural],
+      minzoom: flap(f, lut[f.properties.natural]),
       maxzoom: 15,
       layer: 'water'
     }
@@ -139,7 +141,7 @@ const water = (f) => {
       ditch: 15
     } 
     f.tippecanoe = {
-      minzoom: lut[f.properties.waterway],
+      minzoom: flap(f, lut[f.properties.waterway]),
       maxzoom: 15,
       layer: 'water'
     }
@@ -148,7 +150,7 @@ const water = (f) => {
 
   if (['reservoir'].includes(f.properties.landuse)) {
     f.tippecanoe = {
-      minzoom: 6,
+      minzoom: flap(f, 6),
       maxzoom: 15,
       layer: 'water'
     }
